@@ -1,0 +1,125 @@
+# Erstellt für Android 16 (Baklava) - API 36#
+# Modifiziertes Vorlageskripts mittels Gemini für aktuelle Android Version
+image: eclipse-temurin:21-jdk-jammy
+
+variables:
+  # Muss mit compileSdk in deiner build.gradle übereinstimmen
+  ANDROID_COMPILE_SDK: "36"
+  # Muss mit buildToolsVersion in deiner build.gradle übereinstimmen
+  ANDROID_BUILD_TOOLS: "36.0.0"
+  # Aktuelle Command Line Tools
+  ANDROID_SDK_TOOLS: "11076708"
+  # Gradle Optionen: Daemon aktiviert hoffentlich schneller
+  GRADLE_OPTS: "-Dorg.gradle.daemon=true -Dorg.gradle.parallel=true -Dorg.gradle.caching=true -Dorg.gradle.java.installations.auto-download=false"
+
+# Cache für schnellere Builds
+cache:
+  key:
+    files:
+      - gradle/wrapper/gradle-wrapper.properties
+      - gradle.properties
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+    - .gradle/build-cache
+    - android-sdk-root/
+
+before_script:
+  - apt-get --quiet update --yes
+  - apt-get --quiet install --yes wget unzip
+  
+  # SDK Pfade setzen
+  - export ANDROID_HOME="${PWD}/android-sdk-root"
+  - export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
+  
+  # Intelligente Installation: Nur laden, wenn nicht im Cache vorhanden
+  - |
+    if [ ! -f "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" ]; then
+      echo "SDK nicht im Cache gefunden. Installiere neu..."
+      install -d $ANDROID_HOME
+      wget --no-verbose --output-document=$ANDROID_HOME/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}_latest.zip
+      unzip -q $ANDROID_HOME/cmdline-tools.zip -d $ANDROID_HOME/temp
+      mkdir -p $ANDROID_HOME/cmdline-tools/latest
+      cp -r $ANDROID_HOME/temp/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/
+      rm -rf $ANDROID_HOME/temp $ANDROID_HOME/cmdline-tools.zip
+    else
+      echo "SDK erfolgreich aus Cache geladen."
+    fi
+  
+  # Lizenzen akzeptieren
+  - yes | sdkmanager --licenses > /dev/null || true
+  
+  # Android Komponenten sicherstellen
+  - sdkmanager "platforms;android-${ANDROID_COMPILE_SDK}"
+  - sdkmanager "platform-tools"
+  - sdkmanager "build-tools;${ANDROID_BUILD_TOOLS}"
+  
+  - chmod +x ./gradlew
+
+# --- JOBS ---
+
+# 1. Code-Analyse
+lintDebug:
+  interruptible: true
+  stage: build
+  script:
+    - ./gradlew -Pci --console=plain :app:lintDebug -PbuildDir=lint
+  artifacts:
+    paths:
+      - app/lint/reports/lint-results-debug.html
+    expose_as: "lint-report"
+    when: always
+
+# 2. APK generieren
+assembleDebug:
+  interruptible: true
+  stage: build
+  script:
+    - ./gradlew --build-cache assembleDebug
+  artifacts:
+    paths:
+      - app/build/outputs/apk/debug/
+
+# 3. Tests durchführen
+debugTests:
+  needs: [assembleDebug]
+  interruptible: true
+  stage: test
+  script:
+    - ./gradlew -Pci --console=plain :app:testDebug
+
+# --- ÄNDERUNG BEGIN | 03.06.2026 | Claude Sonnet 4.6 (claude-sonnet-4.6) ---
+
+# 4. Release-APK generieren (nur auf main-Branch)
+assembleRelease:
+  interruptible: true
+  stage: build
+  script:
+    - ./gradlew assembleRelease
+  artifacts:
+    paths:
+      - app/build/outputs/apk/release/
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# 5. GitLab Release erstellen mit APK als Asset (sichtbar auf Projektseite)
+releaseApk:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  before_script: []
+  needs: [assembleRelease]
+  script:
+    - echo "Erstelle GitLab Release fuer $CI_COMMIT_SHORT_SHA"
+  release:
+    name: "Release $CI_COMMIT_SHORT_SHA"
+    description: "Automatischer Build vom $CI_COMMIT_TIMESTAMP"
+    tag_name: "build-$CI_COMMIT_SHORT_SHA"
+    assets:
+      links:
+        - name: "App (Release APK)"
+          url: "$CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_BRANCH/raw/app/build/outputs/apk/release/app-release-unsigned.apk?job=assembleRelease"
+          link_type: package
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# --- ÄNDERUNG END | 03.06.2026 | Claude Sonnet 4.6 (claude-sonnet-4.6) ---
