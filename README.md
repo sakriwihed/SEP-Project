@@ -13,10 +13,9 @@
 </p>
 
 <p align="center">
-  <img src="demo/screenshots/home.jpg" width="24%" alt="Home screen">&nbsp;
-  <img src="demo/screenshots/match.jpg" width="24%" alt="Match screen">&nbsp;
-  <img src="demo/screenshots/statistics.jpg" width="24%" alt="Statistics">
+  <img src="demo/demo.gif" width="300" alt="App demo">
 </p>
+<p align="center"><sub>Walkthrough made from screenshots of the app · <a href="demo/demo.mp4">watch as video</a></sub></p>
 
 > [!NOTE]
 > **This is a showcase repository.** Billiard Helper was built by a student team, so the source code lives in a **private repository**.
