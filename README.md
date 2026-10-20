@@ -13,7 +13,9 @@
 </p>
 
 <p align="center">
-  <img src="demo/demo.gif" width="280" alt="App demo">
+  <img src="demo/screenshots/home.jpg" width="24%" alt="Home screen">&nbsp;
+  <img src="demo/screenshots/match.jpg" width="24%" alt="Match screen">&nbsp;
+  <img src="demo/screenshots/statistics.jpg" width="24%" alt="Statistics">
 </p>
 
 > [!NOTE]
@@ -25,8 +27,10 @@
 ## 💡 About the project
 
 Billiard Helper was developed **from scratch for a real client** as part of the Software Engineering Project at TU Braunschweig.
-Players can track every shot of a match, let the camera detect the balls on the table, measure their break speed and follow their progress over time.
+Players choose a game mode, track every shot of a match, let the camera capture the table, measure their break speed and follow their progress over time.
 The app was delivered to the client and presented at the university's software engineering showcase (**TdSE**).
+
+The app's interface is in German.
 
 ---
 
@@ -34,26 +38,38 @@ The app was delivered to the client and presented at the university's software e
 
 | | Feature | Description |
 |---|---|---|
-| 🎯 | **Match tracking** | Pocketed balls, fouls and innings, in single or team mode |
-| 📷 | **Ball detection** | The camera recognises the balls on the table using OpenCV |
-| ⚡ | **Break speed** | Measures how fast the break shot was |
-| 📊 | **Statistics** | Charts of a player's performance over time |
+| 🎱 | **Four game modes** | 8-Ball, 9-Ball, 10-Ball and 14.1 Straight Pool |
+| 🏁 | **Win conditions** | Single game or *Race To* a set number of racks |
+| 🎯 | **Match tracking** | Pocketed balls, fouls, racks and innings, in single or team mode |
+| 📷 | **Camera & ball detection** | Take a photo of the table, and the balls are detected with OpenCV |
+| ⚡ | **Break speed** | Measures how fast the break shot was, in km/h |
+| 📊 | **Statistics** | Break speed, points and fouls per rack, highest run, win-rate trend chart |
+| 🏆 | **Leaderboards** | Rank players by won matches and other categories, filterable by game mode |
 | 👤 | **Player profiles** | Create and manage local player profiles |
-| 📖 | **Rule book** | Rules for 8-Ball, 9-Ball, 10-Ball and 14.1 Straight Pool |
-| 🏆 | **Leaderboards** | Rank players by wins and other values |
+| 📖 | **Rule book** | Rules for every game mode, available during a match |
 | 📁 | **CSV export** | Export match data for further analysis |
+| 🌙 | **Dark mode** | Switch between light and dark theme |
 
 ---
 
 ## 📱 Screenshots
 
-<p align="center">
-  <img src="demo/screenshots/home.png" width="22%" alt="Home screen">&nbsp;
-  <img src="demo/screenshots/match.png" width="22%" alt="Match tracking">&nbsp;
-  <img src="demo/screenshots/vision.png" width="22%" alt="Ball detection">&nbsp;
-  <img src="demo/screenshots/statistics.png" width="22%" alt="Statistics">
-</p>
-<p align="center"><i>Home · Match tracking · Ball detection · Statistics</i></p>
+<table>
+  <tr>
+    <td align="center" width="20%"><img src="demo/screenshots/home.jpg" alt="Home screen"></td>
+    <td align="center" width="20%"><img src="demo/screenshots/home-menu.jpg" alt="Shortcuts and settings"></td>
+    <td align="center" width="20%"><img src="demo/screenshots/match.jpg" alt="Match screen"></td>
+    <td align="center" width="20%"><img src="demo/screenshots/statistics.jpg" alt="Statistics"></td>
+    <td align="center" width="20%"><img src="demo/screenshots/leaderboards.jpg" alt="Leaderboards"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Home</b><br><sub>Choose the game mode</sub></td>
+    <td align="center"><b>Shortcuts</b><br><sub>Win condition, menu, dark mode</sub></td>
+    <td align="center"><b>Match</b><br><sub>Track balls, fouls and break speed</sub></td>
+    <td align="center"><b>Statistics</b><br><sub>Performance and win-rate trend</sub></td>
+    <td align="center"><b>Leaderboards</b><br><sub>Player ranking</sub></td>
+  </tr>
+</table>
 
 ---
 
